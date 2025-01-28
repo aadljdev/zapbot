@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enviar Mensagens via WhatsApp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+      margin: 15px auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Enviar Mensagens via WhatsApp</h1>
+  <div class="container">
+    <label for="numbers">Lista de Números (separados por vírgula):</label>
+    <input
+      type="text"
+      id="numbers"
+      placeholder="Ex: 5511998765432,5511987654321"
+    />
+
+    <label for="message">Mensagem:</label>
+    <textarea
+      id="message"
+      rows="4"
+      placeholder="Digite sua mensagem aqui..."
+    ></textarea>
+
+    <button id="sendMessage">Enviar Mensagens</button>
+
+    <h3>QR Code para Login</h3>
+    <img id="qrCodeImage" src="" alt="QR Code para login no WhatsApp" />
+  </div>
+
+  <script>
+    // Função para buscar o QR Code do backend
+    async function fetchQRCode() {
+  try {
+    const response = await fetch('/api/qrcode');  // URL relativa para o backend
+    if (!response.ok) {
+      throw new Error('Erro ao buscar QR Code do servidor.');
+    }
+    const data = await response.json();
+    if (data.qrCodeUrl) {
+      document.getElementById('qrCodeImage').src = data.qrCodeUrl;
+    } else if (data.message) {
+      alert(data.message);
+    } else {
+      alert('QR Code não disponível no momento.');
+    }
+  } catch (error) {
+    console.error('Erro ao carregar QR Code:', error);
+    alert('Não foi possível carregar o QR Code. Tente novamente.');
+  }
+}
+
+
+    // Função para enviar as mensagens
+    async function sendMessage() {
+      const numbers = document.getElementById('numbers').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!numbers || !message) {
+        alert('Preencha todos os campos!');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ numbers, message }),
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          alert(data.message || 'Mensagens enviadas com sucesso!');
+        } else {
+          alert(data.error || 'Erro ao enviar mensagens.');
+        }
+      } catch (error) {
+        console.error('Erro ao enviar mensagens:', error);
+        alert('Não foi possível enviar as mensagens. Tente novamente.');
+      }
+    }
+
+    // Eventos
+    document.getElementById('sendMessage').addEventListener('click', sendMessage);
+
+    // Buscar o QR Code ao carregar a página
+    window.onload = fetchQRCode;
+  </script>
+</body>
+</html>

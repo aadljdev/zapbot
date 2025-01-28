@@ -1,0 +1,16 @@
+{
+  "name": "whatsapp-messages",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.x",
+    "qrcode": "^1.x",
+    "cors": "^2.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.x"
+  }
+}
