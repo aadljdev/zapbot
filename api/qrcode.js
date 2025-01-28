@@ -7,10 +7,11 @@ let isReady = false;
 // Usando a variável de ambiente para o caminho da sessão
 const sessionPath = process.env.WHATSAPP_SESSION_PATH || './whatsapp_sessions';
 
+// Use a sessão na memória
 const client = new Client({
   authStrategy: new LocalAuth({
-    clientId: "whatsapp",  // você pode personalizar esse clientId
-    dataPath: sessionPath   // Define o caminho para as sessões
+    // Remover o diretório de arquivos locais (isso usa memória)
+    session: undefined, // Não usa arquivo de sessão
   }),
 });
 
